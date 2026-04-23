@@ -11,6 +11,8 @@ module async_mod10_7seg_up (
 	// 外部重置信號（建議使用低有效按鍵）
 	input  wire rst_n,
 	// 7 段顯示器段訊號輸出（共陽極，低電位點亮）
+	// 位元對應：seg[0]=a  seg[1]=b  seg[2]=c  seg[3]=d
+	//           seg[4]=e  seg[5]=f  seg[6]=g
 	output wire [6:0] seg,
 	// 4-bit 計數值輸出（範圍 0~9）
 	output reg  [3:0] q
@@ -73,8 +75,11 @@ end
 // seg = {a, b, c, d, e, f, g}
 // 0 代表該段點亮，1 代表該段熄滅。
 reg [6:0] seg_r;
-// 內部 seg_r 採 {a,b,c,d,e,f,g}（bit[6] 對應 a）編碼；
-// 實體接腳為 seg[0]=a ... seg[6]=g，因此在輸出端做位元反轉映射。
+// 內部 seg_r 採 {a,b,c,d,e,f,g}（bit[6]=a … bit[0]=g）編碼；
+// 實體接腳需 seg[0]=a … seg[6]=g，故在此做位元反轉映射：
+//   seg[0]=seg_r[6]=a,  seg[1]=seg_r[5]=b,  seg[2]=seg_r[4]=c,
+//   seg[3]=seg_r[3]=d,  seg[4]=seg_r[2]=e,  seg[5]=seg_r[1]=f,
+//   seg[6]=seg_r[0]=g
 assign seg = {seg_r[0], seg_r[1], seg_r[2], seg_r[3], seg_r[4], seg_r[5], seg_r[6]};
 
 // 組合邏輯解碼：依照 q 對應顯示 0~9。
